@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDFKIT · Free browser-based PDF &amp; image tools</title>
+  <meta name="description" content="PDFKIT — free, private, browser-based image compressor, PDF compressor, and PDF merger. No uploads, no server, no cost." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <style>
+    .tab-btn { padding: .625rem 1.25rem; border-radius: .75rem; font-size: .875rem; font-weight: 600; transition: all .2s; cursor: pointer; border: none; }
+    .tab-active { background-color: #4f46e5; color: #fff; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); }
+    .tab-inactive { background-color: #fff; color: #334155; }
+    .tab-inactive:hover { background-color: #f8fafc; }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen antialiased">
+
+  <!-- HEADER -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">📄</span>
+        <h1 class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">PDFKIT</h1>
+      </div>
+      <span class="text-[10px] sm:text-sm text-emerald-600 font-medium bg-emerald-50 px-3 py-1 rounded-full">100% browser-based</span>
+    </div>
+  </header>
+
+  <noscript>
+    <div class="max-w-5xl mx-auto px-4 mt-4 p-3 bg-red-50 text-red-700 text-sm rounded-xl border border-red-200">
+      PDFKIT needs JavaScript to run. Please enable JavaScript in your browser.
+    </div>
+  </noscript>
+
+  <!-- TOP AD -->
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 mt-4">
+    <div class="bg-slate-100 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center text-slate-400 text-sm h-24 sm:h-28 w-full">
+      <span>AdSense · Top Banner (728×90 / responsive)</span>
+    </div>
+  </div>
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-8">
+
+    <!-- TABS -->
+    <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-2" role="tablist">
+      <button id="tab-image" class="tab-btn tab-active" role="tab" aria-selected="true" aria-controls="section-image">🖼️ Image Compressor &amp; Resizer</button>
+      <button id="tab-pdf-compress" class="tab-btn tab-inactive" role="tab" aria-selected="false" aria-controls="section-pdf-compress">📉 PDF Compressor</button>
+      <button id="tab-pdf-merge" class="tab-btn tab-inactive" role="tab" aria-selected="false" aria-controls="section-pdf-merge">🔗 PDF Merger</button>
+    </div>
+
+    <!-- IMAGE SECTION -->
+    <section id="section-image" class="tab-panel space-y-6" role="tabpanel" aria-labelledby="tab-image">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <h2 class="text-xl font-bold text-slate-800 mb-1">Image Compressor &amp; Resizer</h2>
+        <p class="text-sm text-slate-500 mb-1">Upload a JPG or PNG, pick a target size, and download instantly. All processing happens in your browser.</p>
+        <p class="text-xs text-amber-600 mb-4">Note: PNG images lose transparency when converted to JPEG.</p>
+
+        <div class="space-y-4">
+          <div>
+            <label for="image-input" class="block text-sm font-medium text-slate-700 mb-1">Select image</label>
+            <input type="file" id="image-input" accept="image/jpeg, image/png"
+              class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+          </div>
+
+          <div>
+            <label for="image-target" class="block text-sm font-medium text-slate-700 mb-1">Target size</label>
+            <select id="image-target"
+              class="w-full sm:w-48 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+              <option value="20">20 KB (very small)</option>
+              <option value="50" selected>50 KB (recommended)</option>
+              <option value="100">100 KB (high quality)</option>
+            </select>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <button id="image-compress-btn"
+              class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-6 rounded-xl transition shadow-sm">Compress image</button>
+            <a id="image-download-link" download="compressed-image.jpg"
+              class="hidden items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-6 rounded-xl transition">⬇️ Download</a>
+          </div>
+
+          <div id="image-status" class="text-sm text-slate-600 mt-2" aria-live="polite"></div>
+          <div id="image-preview-container" class="hidden mt-2">
+            <img id="image-preview" class="max-h-48 rounded-xl border border-slate-200" alt="Selected image preview" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PDF COMPRESS SECTION -->
+    <section id="section-pdf-compress" class="tab-panel hidden space-y-6" role="tabpanel" aria-labelledby="tab-pdf-compress">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <h2 class="text-xl font-bold text-slate-800 mb-1">PDF Compressor</h2>
+        <p class="text-sm text-slate-500 mb-1">Reduce PDF size by rasterising pages. Text becomes non-selectable after compression.</p>
+        <p class="text-xs text-amber-600 mb-4">Tip: Works best for image-heavy PDFs. Text-heavy PDFs may not shrink and can grow.</p>
+
+        <div class="space-y-4">
+          <div>
+            <label for="pdf-compress-input" class="block text-sm font-medium text-slate-700 mb-1">Select PDF</label>
+            <input type="file" id="pdf-compress-input" accept="application/pdf"
+              class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+          </div>
+
+          <div>
+            <label for="pdf-quality" class="block text-sm font-medium text-slate-700 mb-1">Compression level</label>
+            <select id="pdf-quality"
+              class="w-full sm:w-64 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+              <option value="0.4,0.6">Extreme (smallest)</option>
+              <option value="0.6,0.9" selected>Recommended</option>
+              <option value="0.75,1.1">Light (best quality)</option>
+            </select>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <button id="pdf-compress-btn"
+              class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-6 rounded-xl transition shadow-sm">Compress PDF</button>
+            <a id="pdf-compress-download" download="compressed.pdf"
+              class="hidden items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-6 rounded-xl transition">⬇️ Download</a>
+          </div>
+
+          <div id="pdf-compress-status" class="text-sm text-slate-600 mt-2" aria-live="polite"></div>
+          <div id="pdf-compress-progress" class="hidden h-2 bg-slate-200 rounded-full overflow-hidden mt-2">
+            <div id="pdf-compress-progress-fill" class="h-full bg-indigo-600 transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PDF MERGE SECTION -->
+    <section id="section-pdf-merge" class="tab-panel hidden space-y-6" role="tabpanel" aria-labelledby="tab-pdf-merge">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <h2 class="text-xl font-bold text-slate-800 mb-1">PDF Merger</h2>
+        <p class="text-sm text-slate-500 mb-4">Select multiple PDF files and merge them into one, in the order shown.</p>
+
+        <div class="space-y-4">
+          <div>
+            <label for="pdf-merge-input" class="block text-sm font-medium text-slate-700 mb-1">Select PDF files</label>
+            <input type="file" id="pdf-merge-input" accept="application/pdf" multiple
+              class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <button id="pdf-merge-btn"
+              class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-6 rounded-xl transition shadow-sm">Merge PDFs</button>
+            <a id="pdf-merge-download" download="merged.pdf"
+              class="hidden items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 px-6 rounded-xl transition">⬇️ Download merged PDF</a>
+          </div>
+
+          <div id="pdf-merge-status" class="text-sm text-slate-600 mt-2" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MID AD -->
+    <div class="bg-slate-100 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center text-slate-400 text-sm h-24 sm:h-28 w-full">
+      <span>AdSense · Mid Banner (responsive)</span>
+    </div>
+
+    <!-- BOTTOM AD -->
+    <div class="bg-slate-100 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center text-slate-400 text-sm h-24 sm:h-28 w-full">
+      <span>AdSense · Bottom Banner (responsive)</span>
+    </div>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 mt-8">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-6 text-center text-sm text-slate-500">
+      PDFKIT — free, private, browser-based tools. No files are uploaded to any server.
+    </div>
+  </footer>
+
+  <script>
+    // ---------- PDF.js worker ----------
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    // ---------- Tabs ----------
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const panels = {
+      'tab-image': document.getElementById('section-image'),
+      'tab-pdf-compress': document.getElementById('section-pdf-compress'),
+      'tab-pdf-merge': document.getElementById('section-pdf-merge'),
+    };
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabButtons.forEach(b => {
+          b.classList.remove('tab-active');
+          b.classList.add('tab-inactive');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('tab-active');
+        btn.classList.remove('tab-inactive');
+        btn.setAttribute('aria-selected', 'true');
+        Object.values(panels).forEach(p => p.classList.add('hidden'));
+        panels[btn.id].classList.remove('hidden');
+      });
+    });
+
+    // ---------- Helpers ----------
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function canvasToBlob(canvas, type, quality) {
+      return new Promise((resolve, reject) => {
+        canvas.toBlob(
+          blob => blob ? resolve(blob) : reject(new Error('Canvas toBlob failed')),
+          type, quality
+        );
+      });
+    }
+
+    function loadImage(file) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+        img.onerror = (e) => { URL.revokeObjectURL(url); reject(new Error('Could not load image')); };
+        img.src = url;
+      });
+    }
+
+    function showLink(link) {
+      link.classList.remove('hidden');
+      link.classList.add('inline-flex');
+    }
+    function hideLink(link) {
+      link.classList.add('hidden');
+      link.classList.remove('inline-flex');
+    }
+
+    // ===================================================
+    // 1. IMAGE COMPRESSOR
+    // ===================================================
+    const imageInput          = document.getElementById('image-input');
+    const imageTarget         = document.getElementById('image-target');
+    const imageCompressBtn    = document.getElementById('image-compress-btn');
+    const imageDownloadLink   = document.getElementById('image-download-link');
+    const imageStatus         = document.getElementById('image-status');
+    const imagePreview        = document.getElementById('image-preview');
+    const imagePreviewCont    = document.getElementById('image-preview-container');
+
+    let originalImageFile    = null;
+    let currentPreviewUrl    = null;
+    let currentDownloadUrl   = null;
+
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      originalImageFile = file;
+      imageStatus.textContent = `Selected: ${file.name} (${formatBytes(file.size)})`;
+      hideLink(imageDownloadLink);
+
+      // Revoke previous preview URL
+      if (currentPreviewUrl) URL.revokeObjectURL(currentPreviewUrl);
+      currentPreviewUrl = URL.createObjectURL(file);
+      imagePreview.src = currentPreviewUrl;
+      imagePreviewCont.classList.remove('hidden');
+    });
+
+    imageCompressBtn.addEventListener('click', async () => {
+      if (!originalImageFile) {
+        imageStatus.textContent = 'Please select an image first.';
+        return;
+      }
+      const targetKB = parseInt(imageTarget.value, 10);
+      imageStatus.textContent = 'Compressing…';
+      imageCompressBtn.disabled = true;
+
+      try {
+        const { blob, ext } = await compressImage(originalImageFile, targetKB);
+
+        // Revoke previous download URL
+        if (currentDownloadUrl) URL.revokeObjectURL(currentDownloadUrl);
+        currentDownloadUrl = URL.createObjectURL(blob);
+
+        imageDownloadLink.href = currentDownloadUrl;
+        imageDownloadLink.download =
+          `compressed-${originalImageFile.name.replace(/\.[^.]+$/, '')}.${ext}`;
+        showLink(imageDownloadLink);
+
+        imageStatus.textContent =
+          `Done! Original: ${formatBytes(originalImageFile.size)} → Compressed: ${formatBytes(blob.size)} (target ${targetKB} KB)`;
+      } catch (err) {
+        console.error(err);
+        imageStatus.textContent = 'Compression failed: ' + err.message;
+      } finally {
+        imageCompressBtn.disabled = false;
+      }
+    });
+
+    async function compressImage(file, targetKB) {
+      const targetBytes = targetKB * 1024;
+
+      // Already under target — return original, preserving format
+      if (file.size <= targetBytes) {
+        return { blob: file, ext: file.name.split('.').pop().toLowerCase() || 'jpg' };
+      }
+
+      const img = await loadImage(file);
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      // Start at full size, white background to avoid black PNG-to-JPEG edges
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+
+      // Binary search on JPEG quality
+      let low = 0.1, high = 0.95, bestBlob = null;
+      for (let i = 0; i < 8; i++) {
+        const mid = (low + high) / 2;
+        const blob = await canvasToBlob(canvas, 'image/jpeg', mid);
+        if (blob.size <= targetBytes) { bestBlob = blob; low = mid; }
+        else { high = mid; }
+        if (Math.abs(blob.size - targetBytes) < targetBytes * 0.05) break;
+      }
+
+      // If still too big, progressively downscale
+      if (!bestBlob || bestBlob.size > targetBytes) {
+        let scale = 0.9;
+        while (scale > 0.15) {
+          canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+          canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          bestBlob = await canvasToBlob(canvas, 'image/jpeg', 0.7);
+          if (bestBlob.size <= targetBytes) break;
+          scale -= 0.1;
+        }
+      }
+
+      if (!bestBlob) bestBlob = await canvasToBlob(canvas, 'image/jpeg', 0.4);
+      return { blob: bestBlob, ext: 'jpg' };
+    }
+
+    // ===================================================
+    // 2. PDF COMPRESSOR
+    // ===================================================
+    const pdfCompressInput        = document.getElementById('pdf-compress-input');
+    const pdfQualitySelect        = document.getElementById('pdf-quality');
+    const pdfCompressBtn          = document.getElementById('pdf-compress-btn');
+    const pdfCompressDownload     = document.getElementById('pdf-compress-download');
+    const pdfCompressStatus       = document.getElementById('pdf-compress-status');
+    const pdfCompressProgress     = document.getElementById('pdf-compress-progress');
+    const pdfCompressProgressFill = document.getElementById('pdf-compress-progress-fill');
+
+    let pdfCompressFile    = null;
+    let pdfCompressDlUrl   = null;
+
+    pdfCompressInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+        pdfCompressStatus.textContent = 'Please select a valid PDF file.';
+        pdfCompressFile = null;
+        return;
+      }
+      pdfCompressFile = file;
+      pdfCompressStatus.textContent = `Selected: ${file.name} (${formatBytes(file.size)})`;
+      hideLink(pdfCompressDownload);
+    });
+
+    pdfCompressBtn.addEventListener('click', async () => {
+      if (!pdfCompressFile) {
+        pdfCompressStatus.textContent = 'Please select a PDF first.';
+        return;
+      }
+      const [qualityStr, scaleStr] = pdfQualitySelect.value.split(',');
+      const quality = parseFloat(qualityStr);
+      const scale   = parseFloat(scaleStr);
+
+      pdfCompressBtn.disabled = true;
+      hideLink(pdfCompressDownload);
+      pdfCompressProgress.classList.remove('hidden');
+      pdfCompressProgressFill.style.width = '0%';
+      pdfCompressStatus.textContent = 'Loading PDF…';
+
+      try {
+        // IMPORTANT: pdf.js may detach the ArrayBuffer. Copy it first so we keep a clean one.
+        const buffer = await pdfCompressFile.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: buffer.slice(0) }).promise;
+        const numPages = pdf.numPages;
+
+        const { PDFDocument } = PDFLib;
+        const newPdf = await PDFDocument.create();
+
+        for (let i = 1; i <= numPages; i++) {
+          pdfCompressStatus.textContent = `Processing page ${i} of ${numPages}…`;
+          pdfCompressProgressFill.style.width = `${((i - 1) / numPages) * 100}%`;
+
+          const page = await pdf.getPage(i);
+
+          // Original page size (in PDF points) — what we keep in the output PDF.
+          const origViewport = page.getViewport({ scale: 1.0 });
+          // Lower-resolution viewport for rendering — this is what gets compressed.
+          const renderViewport = page.getViewport({ scale });
+
+          const canvas = document.createElement('canvas');
+          canvas.width  = Math.max(1, Math.round(renderViewport.width));
+          canvas.height = Math.max(1, Math.round(renderViewport.height));
+          const ctx = canvas.getContext('2d');
+
+          // White background first — prevents black boxes from transparent PDF pages after JPEG encoding.
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          await page.render({ canvasContext: ctx, viewport: renderViewport }).promise;
+
+          const jpegBlob  = await canvasToBlob(canvas, 'image/jpeg', quality);
+          const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
+          const jpegImage = await newPdf.embedJpg(jpegBytes);
+
+          // Preserve the ORIGINAL page dimensions; only the embedded image is lower-res.
+          const newPage = newPdf.addPage([origViewport.width, origViewport.height]);
+          newPage.drawImage(jpegImage, {
+            x: 0, y: 0,
+            width: origViewport.width,
+            height: origViewport.height,
+          });
+        }
+
+        pdfCompressProgressFill.style.width = '100%';
+        pdfCompressStatus.textContent = 'Building compressed PDF…';
+
+        const bytes = await newPdf.save();
+        const blob = new Blob([bytes], { type: 'application/pdf' });
+
+        if (pdfCompressDlUrl) URL.revokeObjectURL(pdfCompressDlUrl);
+        pdfCompressDlUrl = URL.createObjectURL(blob);
+
+        pdfCompressDownload.href = pdfCompressDlUrl;
+        pdfCompressDownload.download = `compressed-${pdfCompressFile.name}`;
+        showLink(pdfCompressDownload);
+
+        const change = blob.size < pdfCompressFile.size
+          ? `${(((pdfCompressFile.size - blob.size) / pdfCompressFile.size) * 100).toFixed(0)}% smaller`
+          : `${(((blob.size - pdfCompressFile.size) / pdfCompressFile.size) * 100).toFixed(0)}% larger`;
+
+        pdfCompressStatus.textContent =
+          `Done! ${formatBytes(pdfCompressFile.size)} → ${formatBytes(blob.size)} (${change})`;
+      } catch (err) {
+        console.error(err);
+        pdfCompressStatus.textContent = 'Compression failed: ' + (err.message || err);
+      } finally {
+        pdfCompressBtn.disabled = false;
+        pdfCompressProgress.classList.add('hidden');
+      }
+    });
+
+    // ===================================================
+    // 3. PDF MERGER
+    // ===================================================
+    const pdfMergeInput    = document.getElementById('pdf-merge-input');
+    const pdfMergeBtn      = document.getElementById('pdf-merge-btn');
+    const pdfMergeDownload = document.getElementById('pdf-merge-download');
+    const pdfMergeStatus   = document.getElementById('pdf-merge-status');
+
+    let pdfMergeFiles  = [];
+    let pdfMergeDlUrl  = null;
+
+    pdfMergeInput.addEventListener('change', (e) => {
+      pdfMergeFiles = Array.from(e.target.files).filter(
+        f => f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf')
+      );
+      if (pdfMergeFiles.length === 0) {
+        pdfMergeStatus.textContent = 'No PDF files selected.';
+        return;
+      }
+      pdfMergeStatus.textContent =
+        `Selected ${pdfMergeFiles.length} PDF(s): ${pdfMergeFiles.map(f => f.name).join(', ')}`;
+      hideLink(pdfMergeDownload);
+    });
+
+    pdfMergeBtn.addEventListener('click', async () => {
+      if (pdfMergeFiles.length < 2) {
+        pdfMergeStatus.textContent = 'Please select at least two PDF files to merge.';
+        return;
+      }
+      pdfMergeBtn.disabled = true;
+      hideLink(pdfMergeDownload);
+      pdfMergeStatus.textContent = 'Merging…';
+
+      try {
+        const { PDFDocument } = PDFLib;
+        const mergedPdf = await PDFDocument.create();
+
+        for (const file of pdfMergeFiles) {
+          const buffer = await file.arrayBuffer();
+          const pdf = await PDFDocument.load(buffer);
+          const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+          copiedPages.forEach(p => mergedPdf.addPage(p));
+        }
+
+        const bytes = await mergedPdf.save();
+        const blob = new Blob([bytes], { type: 'application/pdf' });
+
+        if (pdfMergeDlUrl) URL.revokeObjectURL(pdfMergeDlUrl);
+        pdfMergeDlUrl = URL.createObjectURL(blob);
+
+        pdfMergeDownload.href = pdfMergeDlUrl;
+        pdfMergeDownload.download = 'merged-document.pdf';
+        showLink(pdfMergeDownload);
+
+        pdfMergeStatus.textContent =
+          `Done! Merged ${pdfMergeFiles.length} PDFs into ${formatBytes(blob.size)}.`;
+      } catch (err) {
+        console.error(err);
+        pdfMergeStatus.textContent = 'Merge failed: ' + (err.message || err);
+      } finally {
+        pdfMergeBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
