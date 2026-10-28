@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PDFKIT · 24 free browser-based PDF tools</title>
+<meta name="description" content="PDFKIT — 24 free PDF tools that run entirely in your browser. No uploads, no signup, no server." />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+  .btn{display:inline-flex;align-items:center;gap:.5rem;background:#4f46e5;color:#fff;font-weight:600;padding:.625rem 1.5rem;border-radius:.75rem;border:none;cursor:pointer;transition:background .15s}
+  .btn:hover{background:#4338ca}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn-ghost{display:inline-flex;align-items:center;gap:.5rem;background:#f1f5f9;color:#334155;font-weight:600;padding:.625rem 1.25rem;border-radius:.75rem;border:none;cursor:pointer;transition:background .15s;font-size:.875rem}
+  .btn-ghost:hover{background:#e2e8f0}
+  .status{font-size:.875rem;color:#475569;margin-top:.75rem;min-height:1.2em;white-space:pre-wrap}
+  .field{margin-bottom:1rem}
+  .field label{display:block;font-size:.875rem;font-weight:500;color:#334155;margin-bottom:.35rem}
+  .field input[type=file],.field input[type=text],.field input[type=number],.field select,.field textarea{width:100%;padding:.5rem .75rem;border:1px solid #cbd5e1;border-radius:.75rem;font-size:.875rem;background:#fff;color:#0f172a}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#818cf8;box-shadow:0 0 0 3px rgba(129,140,248,.2)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem}
+  @media(max-width:640px){.row3{grid-template-columns:1fr 1fr}}
+  .ad{border:2px dashed #cbd5e1;background:#f8fafc;border-radius:.75rem;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:.8rem;height:100px}
+  .card{background:#fff;border:1px solid #e2e8f0;border-radius:1rem;padding:1.25rem;text-align:left;cursor:pointer;transition:all .15s}
+  .card:hover{border-color:#a5b4fc;box-shadow:0 8px 20px -8px rgba(79,70,229,.25);transform:translateY(-2px)}
+  .chip{padding:.35rem .9rem;border-radius:999px;font-size:.75rem;font-weight:600;border:1px solid #e2e8f0;background:#fff;color:#475569;cursor:pointer;transition:all .15s}
+  .chip.active{background:#4f46e5;color:#fff;border-color:#4f46e5}
+  .page-row{display:flex;align-items:center;gap:.5rem;padding:.5rem;border:1px solid #e2e8f0;border-radius:.5rem;background:#fff;margin-bottom:.5rem;font-size:.875rem}
+  .page-row .mini{border:none;background:#f1f5f9;border-radius:.375rem;width:1.9rem;height:1.9rem;cursor:pointer;font-size:.85rem}
+  .page-row .mini:hover{background:#e2e8f0}
+  .diff-same{color:#475569}
+  .diff-add{background:#dcfce7;color:#166534;display:block;padding:2px 4px;border-radius:3px;margin:1px 0}
+  .diff-del{background:#fee2e2;color:#991b1b;display:block;padding:2px 4px;border-radius:3px;margin:1px 0;text-decoration:line-through}
+  #sig-canvas{border:2px dashed #cbd5e1;border-radius:.75rem;touch-action:none;background:#fff;width:100%;max-width:500px;height:180px;display:block}
+</style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+<header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <!-- Indian monk writing on tadapatra (palm leaves) -->
+      <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 flex-shrink-0" aria-label="Monk writing on palm leaf" role="img">
+        <circle cx="24" cy="24" r="24" fill="#fef3c7"/>
+        <rect x="5" y="34" width="38" height="6" rx="3" fill="#b45309" opacity="0.88"/>
+        <line x1="10" y1="37" x2="38" y2="37" stroke="#78350f" stroke-width="0.6" stroke-dasharray="1.5 1.5" opacity="0.55"/>
+        <circle cx="19" cy="14" r="5.5" fill="#78350f"/>
+        <circle cx="19" cy="8.2" r="1.8" fill="#78350f"/>
+        <path d="M10 33 Q19 20 28 33 Z" fill="#78350f"/>
+        <path d="M26 28 L33 33" stroke="#78350f" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <line x1="32" y1="32" x2="38" y2="38" stroke="#451a03" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <h1 class="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">PDFKIT</h1>
+    </div>
+    <span class="text-[10px] sm:text-xs text-emerald-600 font-medium bg-emerald-50 px-3 py-1 rounded-full">100% browser-based</span>
+  </div>
+</header>
+
+<div class="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
+  <div class="ad"><span>AdSense · Top Banner</span></div>
+</div>
+
+<main class="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+  <div id="home-view">
+    <div class="mb-5">
+      <input id="search" type="text" placeholder="Search 24 tools…" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 text-sm bg-white" />
+      <div id="cat-filters" class="flex flex-wrap gap-2 mt-3"></div>
+    </div>
+    <div id="tool-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+  </div>
+
+  <div id="tool-view" class="hidden">
+    <button id="back-btn" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium mb-4">← All tools</button>
+    <div class="bg-white rounded-2xl border border-slate-200 p-6">
+      <h2 id="tool-title" class="text-2xl font-bold text-slate-800 mb-1"></h2>
+      <p id="tool-desc" class="text-sm text-slate-500 mb-6"></p>
+      <div id="tool-body"></div>
+    </div>
+  </div>
+
+  <div class="mt-8"><div class="ad"><span>AdSense · Mid Banner</span></div></div>
+  <div class="mt-4"><div class="ad"><span>AdSense · Bottom Banner</span></div></div>
+</main>
+
+<footer class="bg-white border-t border-slate-200 mt-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 text-center text-sm text-slate-500">
+    PDFKIT — 24 free, private, browser-based tools. Your files never leave your device.
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   SETUP
+============================================================ */
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
+
+/* ============================================================
+   HELPERS
+============================================================ */
+function fmt(b){ if(b<1024)return b+' B'; if(b<1048576)return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(2)+' MB'; }
+
+function download(data, name, mime){
+  const blob = data instanceof Blob ? data : new Blob([data], {type:mime||'application/octet-stream'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+
+async function loadBytes(file){ return new Uint8Array(await file.arrayBuffer()); }
+async function loadPdfLib(bytes){ return PDFDocument.load(bytes, { ignoreEncryption:true }); }
+async function openPdfJs(bytes){ return pdfjsLib.getDocument({ data: bytes.slice(0) }).promise; }
+
+function parseRanges(input, total){
+  const set = new Set();
+  const t = (input||'').trim().toLowerCase();
+  if(t==='' || t==='all'){
+    for(let i=0;i<total;i++) set.add(i);
+    return [...set];
+  }
+  for(const part of t.split(',')){
+    const p = part.trim(); if(!p) continue;
+    const m = p.match(/^(\d+)\s*-\s*(\d+)$/);
+    if(m){
+      let a=parseInt(m[1]), b=parseInt(m[2]);
+      if(a>b)[a,b]=[b,a];
+      for(let i=a;i<=b;i++) if(i>=1&&i<=total) set.add(i-1);
+    } else if(/^\d+$/.test(p)){
+      const n=parseInt(p);
+      if(n>=1&&n<=total) set.add(n-1);
+    }
+  }
+  return [...set].sort((a,b)=>a-b);
+}
+
+function rgbHex(hex){
+  const h = hex.replace('#','');
+  const r = parseInt(h.substr(0,2),16)/255;
+  const g = parseInt(h.substr(2,2),16)/255;
+  const b = parseInt(h.substr(4,2),16)/255;
+  return rgb(r,g,b);
+}
+
+async function renderPageToCanvas(page, scale){
+  const vp = page.getViewport({ scale });
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(vp.width));
+  canvas.height = Math.max(1, Math.round(vp.height));
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  await page.render({ canvasContext: ctx, viewport: vp }).promise;
+  return { canvas, vp };
+}
+
+function canvasBlob(canvas, type, quality){
+  return new Promise((res, rej) => canvas.toBlob(b => b?res(b):rej(new Error('toBlob failed')), type, quality));
+}
+
+async function decodeImageToCanvas(file){
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => {
+      const im = new Image();
+      im.onload = () => res(im);
+      im.onerror = () => rej(new Error('Cannot decode image: ' + file.name + ' (format may not be supported by your browser)'));
+      im.src = url;
+    });
+    const w = img.naturalWidth || img.width || 800;
+    const h = img.naturalHeight || img.height || 600;
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,w,h);
+    ctx.drawImage(img, 0, 0, w, h);
+    return { canvas, width: w, height: h };
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+function detectInputMime(file){
+  const t = (file.type || '').toLowerCase();
+  if(t === 'image/jpeg' || t === 'image/jpg') return 'image/jpeg';
+  if(t === 'image/png') return 'image/png';
+  if(t === 'image/webp') return 'image/webp';
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  if(ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
+  if(ext === 'png') return 'image/png';
+  if(ext === 'webp') return 'image/webp';
+  return 'image/jpeg';
+}
+
+function mimeToExt(mime){
+  if(mime === 'image/jpeg') return 'jpg';
+  if(mime === 'image/png') return 'png';
+  if(mime === 'image/webp') return 'webp';
+  return 'jpg';
+}
+
+function parseSizeInput(val, unit){
+  const v = parseFloat(val);
+  if(!isFinite(v) || v <= 0) throw new Error('Enter a valid size (5 KB – 2048 KB)');
+  const bytes = Math.round(v * (unit === 'MB' ? 1048576 : 1024));
+  const MIN = 5 * 1024;
+  const MAX = 2048 * 1024;
+  if(bytes < MIN) throw new Error('Minimum is 5 KB');
+  if(bytes > MAX) throw new Error('Maximum is 2 MB (2048 KB)');
+  return bytes;
+}
+
+async function compressImageToTarget(sourceCanvas, targetBytes, mimeType){
+  mimeType = mimeType || 'image/jpeg';
+  const isPng = mimeType === 'image/png';
+  let workCanvas = sourceCanvas;
+  let scale = 1;
+  let bestResult = null;
+  const qualities = isPng ? [undefined] : [0.9, 0.75, 0.6, 0.45, 0.3, 0.15, 0.05];
+
+  for(let iter = 0; iter < 15; iter++){
+    for(const q of qualities){
+      const blob = await canvasBlob(workCanvas, mimeType, q);
+      if(!bestResult || blob.size < bestResult.blob.size){
+        bestResult = { blob, quality: q, achieved: blob.size <= targetBytes, mimeType, width: workCanvas.width, height: workCanvas.height };
+      }
+      if(blob.size <= targetBytes) return bestResult;
+    }
+    scale *= 0.75;
+    if(sourceCanvas.width * scale < 40 || sourceCanvas.height * scale < 40) break;
+    const newCanvas = document.createElement('canvas');
+    newCanvas.width = Math.max(1, Math.round(sourceCanvas.width * scale));
+    newCanvas.height = Math.max(1, Math.round(sourceCanvas.height * scale));
+    const ctx = newCanvas.getContext('2d');
+    if(!isPng){ ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,newCanvas.width,newCanvas.height); }
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(sourceCanvas, 0, 0, newCanvas.width, newCanvas.height);
+    workCanvas = newCanvas;
+  }
+  return bestResult;
+}
+
+async function compressPdfToTarget(file, targetBytes, onProgress){
+  const pdf = await openPdfJs(await loadBytes(file));
+  const numPages = pdf.numPages;
+  const rendered = [];
+  const originalSizes = [];
+  for(let i=1;i<=numPages;i++){
+    if(onProgress) onProgress(`Rendering page ${i}/${numPages}…`, 0.4 * (i/numPages));
+    const page = await pdf.getPage(i);
+    const { canvas } = await renderPageToCanvas(page, 1.5);
+    rendered.push({ page, canvas });
+    originalSizes.push(page.getViewport({ scale: 1 }));
+  }
+  const MAX_ATTEMPTS = 4;
+  let perPageBudget = Math.floor(targetBytes / numPages * 0.85);
+  let bestOut = null;
+  let bestSize = Infinity;
+  let bestAchieved = false;
+  for(let attempt=0; attempt<MAX_ATTEMPTS; attempt++){
+    const out = await PDFDocument.create();
+    for(let i=0;i<numPages;i++){
+      const totalSteps = MAX_ATTEMPTS * numPages;
+      const currentStep = attempt * numPages + i + 1;
+      if(onProgress) onProgress(
+        `Compressing page ${i+1}/${numPages} (attempt ${attempt+1})…`,
+        0.4 + 0.6 * (currentStep / totalSteps)
+      );
+      const { canvas } = rendered[i];
+      const res = await compressImageToTarget(canvas, perPageBudget, 'image/jpeg');
+      const img = await out.embedJpg(new Uint8Array(await res.blob.arrayBuffer()));
+      const orig = originalSizes[i];
+      const p = out.addPage([orig.width, orig.height]);
+      p.drawImage(img, { x:0, y:0, width:orig.width, height:orig.height });
+    }
+    const bytes = await out.save();
+    if(bytes.length < bestSize){
+      bestSize = bytes.length;
+      bestOut = bytes;
+      bestAchieved = bytes.length <= targetBytes;
+    }
+    if(bytes.length <= targetBytes) break;
+    perPageBudget = Math.max(1024, Math.floor(perPageBudget * 0.7));
+  }
+  return { bytes: bestOut, size: bestSize, achieved: bestAchieved };
+}
+
+/* ============================================================
+   TOOL REGISTRY
+============================================================ */
+const CATS = {
+  1: 'Organize & Pages',
+  2: 'Convert',
+  3: 'Optimize & Analyze',
+  4: 'Edit & Forms',
+  5: 'Security & Signing'
+};
+
+const TOOLS = [
+  { id:'merge', name:'Merge PDF', cat:1, icon:'🔗', desc:'Combine multiple PDFs into one document in the order you choose.', init: initMerge },
+  { id:'split', name:'Split PDF', cat:1, icon:'✂️', desc:'Split by page ranges, into individual pages, or every N pages.', init: initSplit },
+  { id:'remove', name:'Remove Pages', cat:1, icon:'🗑️', desc:'Delete specific pages or page ranges from a PDF.', init: initRemove },
+  { id:'extract', name:'Extract Pages', cat:1, icon:'📤', desc:'Pull chosen pages into a brand-new standalone PDF.', init: initExtract },
+  { id:'organize', name:'Organize PDF', cat:1, icon:'🎛️', desc:'Reorder, rotate, delete pages, or insert blank pages.', init: initOrganize },
+  { id:'rotate', name:'Rotate PDF', cat:1, icon:'🔄', desc:'Rotate selected pages or the whole document 90°/180°/270°.', init: initRotate },
+
+  { id:'jpg2pdf', name:'JPG to PDF', cat:2, icon:'🖼️', desc:'Quick convert: JPG, PNG, or WEBP images into a single PDF.', init: initJpg2Pdf },
+  { id:'photo2pdf', name:'Photo to PDF', cat:2, icon:'📸', desc:'Photos to PDF — preserve source format, choose output format, or compress to a target size.', init: initPhoto2Pdf },
+  { id:'pdf2jpg', name:'PDF to JPG', cat:2, icon:'🖼️', desc:'Convert each page of a PDF into a JPG image (ZIP download).', init: initPdf2Jpg },
+  { id:'pdf2md', name:'PDF to Markdown', cat:2, icon:'⬇️', desc:'Extract text from a PDF with line breaks preserved, save as Markdown.', init: initPdf2Md },
+
+  { id:'compress', name:'Compress PDF', cat:3, icon:'📉', desc:'Shrink PDF size with presets or a custom target file size (5 KB – 2 MB).', init: initCompress },
+  { id:'image-compress', name:'Image Compressor', cat:3, icon:'🗜️', desc:'Compress images. Format in = format out by default. Target size 5 KB – 2 MB.', init: initImageCompress },
+  { id:'repair', name:'Repair PDF', cat:3, icon:'🛠️', desc:'Best-effort: re-parse and re-save a damaged PDF.', init: initRepair },
+  { id:'ocr', name:'OCR PDF', cat:3, icon:'👁️', desc:'Extract text from scanned PDFs/images into a .txt file.', init: initOcr },
+  { id:'compare', name:'Compare PDF', cat:3, icon:'🔍', desc:'Extract text from two PDFs and show a line-by-line diff.', init: initCompare },
+
+  { id:'add-text', name:'Add Text', cat:4, icon:'🅰️', desc:'Overlay new text with custom font size, color, and position.', init: initAddText },
+  { id:'add-shapes', name:'Add Shapes', cat:4, icon:'🔺', desc:'Draw rectangles, ellipses, or lines with custom colors.', init: initAddShapes },
+  { id:'insert-image', name:'Insert Image', cat:4, icon:'📷', desc:'Place a logo or image on every page or a chosen page.', init: initInsertImage },
+  { id:'form-fields', name:'Form Fields', cat:4, icon:'📋', desc:'Add interactive text fields, checkboxes, or dropdowns.', init: initFormFields },
+  { id:'watermark', name:'Add Watermark', cat:4, icon:'💧', desc:'Apply a text watermark to one page or all pages.', init: initWatermark },
+  { id:'page-numbers', name:'Page Numbers', cat:4, icon:'🔢', desc:'Insert sequential page numbers at any position.', init: initPageNumbers },
+  { id:'crop', name:'Crop PDF', cat:4, icon:'✂️', desc:'Trim white margins or isolate a custom region.', init: initCrop },
+
+  { id:'redact', name:'Redact PDF', cat:5, icon:'⬛', desc:'Permanently black out a region (pages are rasterized so text is removed).', init: initRedact },
+  { id:'sign', name:'Sign PDF', cat:5, icon:'✍️', desc:'Draw a signature and stamp it onto a PDF page.', init: initSign }
+];
+
+/* ============================================================
+   HOME VIEW RENDERING
+============================================================ */
+const homeView = document.getElementById('home-view');
+const toolView = document.getElementById('tool-view');
+const grid = document.getElementById('tool-grid');
+const searchInput = document.getElementById('search');
+const catFilters = document.getElementById('cat-filters');
+
+let activeCat = 0;
+
+function renderFilters(){
+  const chips = ['All','Organize & Pages','Convert','Optimize & Analyze','Edit & Forms','Security & Signing'];
+  catFilters.innerHTML = '';
+  chips.forEach((label, i) => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (activeCat === i ? ' active' : '');
+    b.textContent = label;
+    b.onclick = () => { activeCat = i; renderFilters(); renderGrid(); };
+    catFilters.appendChild(b);
+  });
+}
+
+function renderGrid(){
+  const q = (searchInput.value||'').toLowerCase().trim();
+  grid.innerHTML = '';
+  let shown = 0;
+  TOOLS.forEach(t => {
+    if(activeCat && t.cat !== activeCat) return;
+    if(q && !(t.name+' '+t.desc+' '+CATS[t.cat]).toLowerCase().includes(q)) return;
+    shown++;
+    const card = document.createElement('button');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="text-2xl mb-2">${t.icon}</div>
+      <div class="font-semibold text-slate-800 mb-1">${t.name}</div>
+      <div class="text-xs text-slate-500 leading-snug">${t.desc}</div>
+      <div class="text-[10px] text-indigo-500 font-medium mt-3">${CATS[t.cat]}</div>
+    `;
+    card.onclick = () => openTool(t);
+    grid.appendChild(card);
+  });
+  if(!shown){
+    grid.innerHTML = `<div class="col-span-full text-center text-sm text-slate-500 py-10">No tools match your search.</div>`;
+  }
+}
+
+searchInput.addEventListener('input', renderGrid);
+
+function openTool(tool){
+  homeView.classList.add('hidden');
+  toolView.classList.remove('hidden');
+  document.getElementById('tool-title').textContent = tool.icon + ' ' + tool.name;
+  document.getElementById('tool-desc').textContent = tool.desc;
+  const body = document.getElementById('tool-body');
+  body.innerHTML = '';
+  tool.init(body);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.getElementById('back-btn').onclick = () => {
+  toolView.classList.add('hidden');
+  homeView.classList.remove('hidden');
+  window.scrollTo({top:0});
+};
+
+/* ============================================================
+   TOOLS
+============================================================ */
+function initMerge(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF files (merged in this order)</label>
+      <input type="file" id="f" accept="application/pdf" multiple></div>
+    <button id="run" class="btn">Merge PDFs</button>
+    <div id="st" class="status"></div>`;
+  const f = body.querySelector('#f'), run = body.querySelector('#run'), st = body.querySelector('#st');
+  run.onclick = async () => {
+    const files = [...f.files];
+    if(files.length < 2) return st.textContent = 'Select at least 2 PDF files.';
+    run.disabled = true; st.textContent = 'Merging…';
+    try{
+      const out = await PDFDocument.create();
+      for(const file of files){
+        const src = await loadPdfLib(await loadBytes(file));
+        const pages = await out.copyPages(src, src.getPageIndices());
+        pages.forEach(p => out.addPage(p));
+      }
+      download(await out.save(), 'merged.pdf', 'application/pdf');
+      st.textContent = 'Done — merged ' + files.length + ' files.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initSplit(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div class="field"><label>Split mode</label>
+      <select id="mode">
+        <option value="ranges">Extract custom ranges into one PDF</option>
+        <option value="each">Split into individual pages (ZIP)</option>
+        <option value="every">Split every N pages (ZIP)</option>
+      </select></div>
+    <div class="field" id="range-wrap"><label>Page ranges (e.g. 1-3,5,7-9)</label>
+      <input type="text" id="ranges" placeholder="1-3,5,7-9"></div>
+    <div class="field hidden" id="every-wrap"><label>Pages per file</label>
+      <input type="number" id="every" value="5" min="1"></div>
+    <button id="run" class="btn">Split PDF</button>
+    <div id="st" class="status"></div>`;
+  const f=body.querySelector('#f'), mode=body.querySelector('#mode'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  const rangeWrap=body.querySelector('#range-wrap'), everyWrap=body.querySelector('#every-wrap');
+  mode.onchange = () => {
+    rangeWrap.classList.toggle('hidden', mode.value !== 'ranges');
+    everyWrap.classList.toggle('hidden', mode.value !== 'every');
+  };
+  run.onclick = async () => {
+    const file = f.files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Working…';
+    try{
+      const src = await loadPdfLib(await loadBytes(file));
+      const total = src.getPageCount();
+
+      if(mode.value === 'ranges'){
+        const idx = parseRanges(body.querySelector('#ranges').value, total);
+        if(!idx.length) throw new Error('No valid pages in range.');
+        const out = await PDFDocument.create();
+        const pages = await out.copyPages(src, idx);
+        pages.forEach(p => out.addPage(p));
+        download(await out.save(), 'split.pdf', 'application/pdf');
+        st.textContent = 'Done — extracted ' + idx.length + ' pages.';
+      }
+      else if(mode.value === 'each'){
+        const zip = new JSZip();
+        for(let i=0;i<total;i++){
+          const out = await PDFDocument.create();
+          const [p] = await out.copyPages(src, [i]);
+          out.addPage(p);
+          zip.file(`page-${String(i+1).padStart(3,'0')}.pdf`, await out.save());
+        }
+        download(await zip.generateAsync({type:'blob'}), 'split-pages.zip', 'application/zip');
+        st.textContent = 'Done — ' + total + ' separate PDFs in ZIP.';
+      }
+      else{
+        const n = Math.max(1, parseInt(body.querySelector('#every').value)||1);
+        const zip = new JSZip();
+        let part = 1;
+        for(let start=0; start<total; start+=n){
+          const idx = [];
+          for(let i=start; i<Math.min(start+n, total); i++) idx.push(i);
+          const out = await PDFDocument.create();
+          const pages = await out.copyPages(src, idx);
+          pages.forEach(p => out.addPage(p));
+          zip.file(`part-${String(part).padStart(2,'0')}.pdf`, await out.save());
+          part++;
+        }
+        download(await zip.generateAsync({type:'blob'}), 'split-parts.zip', 'application/zip');
+        st.textContent = 'Done — ' + (part-1) + ' files in ZIP.';
+      }
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initRemove(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div class="field"><label>Pages to remove (e.g. 2,5,7-9)</label>
+      <input type="text" id="ranges" placeholder="2,5,7-9"></div>
+    <button id="run" class="btn">Remove Pages</button>
+    <div id="st" class="status"></div>`;
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = f.files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Working…';
+    try{
+      const src = await loadPdfLib(await loadBytes(file));
+      const total = src.getPageCount();
+      const remove = new Set(parseRanges(body.querySelector('#ranges').value, total));
+      if(!remove.size) throw new Error('No valid pages specified.');
+      const keep = [];
+      for(let i=0;i<total;i++) if(!remove.has(i)) keep.push(i);
+      if(!keep.length) throw new Error('You cannot remove every page.');
+      const out = await PDFDocument.create();
+      const pages = await out.copyPages(src, keep);
+      pages.forEach(p => out.addPage(p));
+      download(await out.save(), 'removed-pages.pdf', 'application/pdf');
+      st.textContent = 'Done — removed ' + remove.size + ' pages, kept ' + keep.length + '.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initExtract(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div class="field"><label>Pages to extract (e.g. 1-3,8)</label>
+      <input type="text" id="ranges" placeholder="1-3,8"></div>
+    <button id="run" class="btn">Extract Pages</button>
+    <div id="st" class="status"></div>`;
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = f.files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Working…';
+    try{
+      const src = await loadPdfLib(await loadBytes(file));
+      const total = src.getPageCount();
+      const idx = parseRanges(body.querySelector('#ranges').value, total);
+      if(!idx.length) throw new Error('No valid pages specified.');
+      const out = await PDFDocument.create();
+      const pages = await out.copyPages(src, idx);
+      pages.forEach(p => out.addPage(p));
+      download(await out.save(), 'extracted-pages.pdf', 'application/pdf');
+      st.textContent = 'Done — extracted ' + idx.length + ' pages.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initOrganize(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div id="list" class="mt-3"></div>
+    <div class="flex flex-wrap gap-2 mt-3">
+      <button id="blank" class="btn-ghost">+ Blank page at end</button>
+      <button id="save" class="btn">Save PDF</button>
+    </div>
+    <div id="st" class="status"></div>`;
+  const f = body.querySelector('#f');
+  const list = body.querySelector('#list');
+  const st = body.querySelector('#st');
+  let srcDoc = null;
+  let order = [];
+
+  function renderList(){
+    if(!order.length){ list.innerHTML = ''; return; }
+    list.innerHTML = '';
+    order.forEach((entry, i) => {
+      const row = document.createElement('div');
+      row.className = 'page-row';
+      row.innerHTML = `
+        <span class="font-mono text-xs text-slate-400 w-6">${i+1}</span>
+        <span class="flex-1 text-slate-700">${entry.blank ? '(blank page)' : 'Page ' + (entry.srcIndex+1)}${entry.rot ? ' · rotated ' + entry.rot + '°' : ''}</span>
+        <button class="mini" data-a="up" title="Move up">↑</button>
+        <button class="mini" data-a="down" title="Move down">↓</button>
+        <button class="mini" data-a="rot" title="Rotate 90°">⟳</button>
+        <button class="mini" data-a="del" title="Delete">✕</button>
+      `;
+      row.querySelectorAll('button').forEach(b => {
+        b.onclick = () => {
+          const a = b.dataset.a;
+          if(a === 'up' && i > 0){ [order[i-1], order[i]] = [order[i], order[i-1]]; }
+          else if(a === 'down' && i < order.length-1){ [order[i+1], order[i]] = [order[i], order[i+1]]; }
+          else if(a === 'rot'){ entry.rot = (entry.rot + 90) % 360; }
+          else if(a === 'del'){ order.splice(i, 1); }
+          renderList();
+        };
+      });
+      list.appendChild(row);
+    });
+  }
+
+  f.onchange = async () => {
+    const file = f.files[0];
+    if(!file) return;
+    st.textContent = 'Loading…';
+    try{
+      srcDoc = await loadPdfLib(await loadBytes(file));
+      const total = srcDoc.getPageCount();
+      order = [];
+      for(let i=0;i<total;i++) order.push({ srcIndex: i, rot: 0, blank: false });
+      st.textContent = 'Loaded ' + total + ' pages. Use the arrows and buttons to arrange.';
+      renderList();
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+  };
+
+  body.querySelector('#blank').onclick = () => {
+    if(!srcDoc) return st.textContent = 'Load a PDF first.';
+    order.push({ srcIndex: null, rot: 0, blank: true });
+    renderList();
+  };
+
+  body.querySelector('#save').onclick = async () => {
+    if(!srcDoc || !order.length) return st.textContent = 'Load a PDF first.';
+    st.textContent = 'Saving…';
+    try{
+      const out = await PDFDocument.create();
+      for(const entry of order){
+        if(entry.blank){
+          const p = out.addPage([595, 842]);
+          if(entry.rot) p.setRotation(degrees(entry.rot));
+        } else {
+          const [copied] = await out.copyPages(srcDoc, [entry.srcIndex]);
+          const base = srcDoc.getPage(entry.srcIndex).getRotation().angle || 0;
+          if(base + entry.rot) copied.setRotation(degrees((base + entry.rot) % 360));
+          out.addPage(copied);
+        }
+      }
+      download(await out.save(), 'organized.pdf', 'application/pdf');
+      st.textContent = 'Done — saved ' + order.length + ' pages.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+  };
+}
+
+function initRotate(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div class="field"><label>Pages (blank = all)</label>
+      <input type="text" id="ranges" placeholder="leave blank for all"></div>
+    <div class="field"><label>Angle</label>
+      <select id="angle">
+        <option value="90">90° clockwise</option>
+        <option value="-90">90° counter-clockwise</option>
+        <option value="180">180°</option>
+      </select></div>
+    <button id="run" class="btn">Rotate</button>
+    <div id="st" class="status"></div>`;
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = f.files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Rotating…';
+    try{
+      const doc = await loadPdfLib(await loadBytes(file));
+      const total = doc.getPageCount();
+      const idx = parseRanges(body.querySelector('#ranges').value, total);
+      if(!idx.length) throw new Error('No valid pages.');
+      const delta = parseInt(body.querySelector('#angle').value);
+      idx.forEach(i => {
+        const p = doc.getPage(i);
+        const cur = p.getRotation().angle || 0;
+        p.setRotation(degrees(((cur + delta) % 360 + 360) % 360));
+      });
+      download(await doc.save(), 'rotated.pdf', 'application/pdf');
+      st.textContent = 'Done — rotated ' + idx.length + ' pages.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initJpg2Pdf(body){
+  body.innerHTML = `
+    <div class="field"><label>Images (JPG, PNG, WEBP)</label>
+      <input type="file" id="f" accept="image/*" multiple></div>
+    <div class="field"><label>Page size</label>
+      <select id="size">
+        <option value="fit" selected>Fit page to each image</option>
+        <option value="a4">A4 (portrait, image centered)</option>
+      </select></div>
+    <button id="run" class="btn">Convert to PDF</button>
+    <div id="st" class="status"></div>`;
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const files = [...f.files];
+    if(!files.length) return st.textContent = 'Select at least one image.';
+    run.disabled = true; st.textContent = 'Converting…';
+    try{
+      const out = await PDFDocument.create();
+      const A4 = [595, 842];
+      let ok = 0;
+      for(const file of files){
+        try{
+          const { canvas, width, height } = await decodeImageToCanvas(file);
+          const jpegBlob = await canvasBlob(canvas, 'image/jpeg', 0.92);
+          const jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
+          const img = await out.embedJpg(jpegBytes);
+          if(body.querySelector('#size').value === 'fit'){
+            const page = out.addPage([width, height]);
+            page.drawImage(img, { x:0, y:0, width, height });
+          } else {
+            const page = out.addPage(A4);
+            const scale = Math.min(A4[0]/width, A4[1]/height, 1);
+            const w = width * scale, h = height * scale;
+            page.drawImage(img, { x:(A4[0]-w)/2, y:(A4[1]-h)/2, width:w, height:h });
+          }
+          ok++;
+          st.textContent = `Converted ${ok}/${files.length}…`;
+        }catch(imgErr){
+          console.warn('Skipping ' + file.name + ': ' + imgErr.message);
+        }
+      }
+      if(!ok) throw new Error('No images could be decoded.');
+      download(await out.save(), 'images.pdf', 'application/pdf');
+      st.textContent = `Done — ${ok} of ${files.length} images converted.` + (ok<files.length ? ' (some skipped — unsupported format)' : '');
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initPhoto2Pdf(body){
+  body.innerHTML = `
+    <div class="field"><label>Photos (JPG, PNG, WEBP, SVG, anything your browser can open)</label>
+      <input type="file" id="f" accept="image/*" multiple></div>
+
+    <div class="field"><label>Page size</label>
+      <select id="size">
+        <option value="fit" selected>Fit page to each photo</option>
+        <option value="a4">A4 portrait (centered)</option>
+        <option value="letter">Letter portrait (centered)</option>
+      </select></div>
+
+    <div class="field"><label>Embedded image format inside PDF</label>
+      <select id="outfmt">
+        <option value="auto" selected>Auto — match each input (format in = format out)</option>
+        <option value="image/jpeg">JPEG — smaller PDFs</option>
+        <option value="image/png">PNG — lossless, larger PDFs</option>
+        <option value="image/webp">WEBP — good compression (rasterized to JPEG internally)</option>
+      </select>
+      <p class="text-xs text-slate-500 mt-1">PDF embeds only JPEG or PNG. "WEBP" is honored as a canvas encode step before embedding as PNG/JPEG. SVG input is supported and rasterized.</p>
+    </div>
+
+    <div class="field"><label>Photo compression</label>
+      <select id="mode">
+        <option value="none" selected>None — best quality</option>
+        <option value="preset">Preset (Recommended)</option>
+        <option value="target">Custom target size per photo</option>
+      </select></div>
+
+    <div class="field hidden" id="target-wrap">
+      <label class="text-base font-semibold text-slate-700 mb-2 block">Required output size per photo</label>
+      <div class="grid grid-cols-[1fr_auto] gap-3 items-center">
+        <input type="number" id="target-val" value="200" min="5" max="2048" step="any" class="w-full h-16 px-4 text-3xl font-bold text-center rounded-xl border-2 border-indigo-300 bg-indigo-50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-200 transition-all text-indigo-900" />
+        <select id="target-unit" class="w-24 h-16 text-lg font-bold text-center rounded-xl border-2 border-indigo-300 bg-white px-2 cursor-pointer focus:outline-none focus:ring-4 focus:ring-indigo-200 text-indigo-900">
+          <option value="KB">KB</option>
+          <option value="MB">MB</option>
+        </select>
+      </div>
+      <p class="text-xs text-slate-500 mt-2">Range: 5 KB – 2048 KB (2 MB). The compressor will reduce quality and, if needed, resolution to fit.</p>
+    </div>
+
+    <button id="run" class="btn">Create PDF</button>
+    <div id="st" class="status"></div>`;
+
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  const mode=body.querySelector('#mode'), targetWrap=body.querySelector('#target-wrap');
+  mode.onchange = () => { targetWrap.classList.toggle('hidden', mode.value !== 'target'); };
+
+  const PAGE_SIZES = { a4: [595, 842], letter: [612, 792] };
+
+  run.onclick = async () => {
+    const files = [...f.files];
+    if(!files.length) return st.textContent = 'Select at least one photo.';
+    run.disabled = true;
+    try{
+      let targetBytes = null;
+      if(mode.value === 'target'){
+        targetBytes = parseSizeInput(
+          body.querySelector('#target-val').value,
+          body.querySelector('#target-unit').value
+        );
+      }
+
+      const userOutFmt = body.querySelector('#outfmt').value;
+      const out = await PDFDocument.create();
+      const sizeOpt = body.querySelector('#size').value;
+      let done = 0;
+
+      for(const file of files){
+        st.textContent = `Processing ${done+1}/${files.length}…`;
+        try{
+          const { canvas } = await decodeImageToCanvas(file);
+          let effectiveFmt;
+          if(userOutFmt === 'auto') effectiveFmt = detectInputMime(file);
+          else if(userOutFmt === 'image/webp') effectiveFmt = 'image/jpeg';
+          else effectiveFmt = userOutFmt;
+
+          let imgBlob;
+          if(mode.value === 'none'){
+            imgBlob = await canvasBlob(canvas, effectiveFmt, 0.95);
+          } else if(mode.value === 'preset'){
+            imgBlob = await canvasBlob(canvas, effectiveFmt, 0.7);
+          } else {
+            const res = await compressImageToTarget(canvas, targetBytes, effectiveFmt);
+            imgBlob = res.blob;
+            effectiveFmt = res.mimeType;
+          }
+
+          const imgBytes = new Uint8Array(await imgBlob.arrayBuffer());
+          const isPng = effectiveFmt === 'image/png';
+          const img = isPng ? await out.embedPng(imgBytes) : await out.embedJpg(imgBytes);
+          const imgW = img.width, imgH = img.height;
+
+          if(sizeOpt === 'fit'){
+            const page = out.addPage([imgW, imgH]);
+            page.drawImage(img, { x:0, y:0, width:imgW, height:imgH });
+          } else {
+            const [pw, ph] = PAGE_SIZES[sizeOpt];
+            const page = out.addPage([pw, ph]);
+            const scale = Math.min(pw/imgW, ph/imgH, 1);
+            const w = imgW * scale, h = imgH * scale;
+            page.drawImage(img, { x:(pw-w)/2, y:(ph-h)/2, width:w, height:h });
+          }
+          done++;
+        }catch(imgErr){
+          console.warn('Skipping ' + file.name + ': ' + imgErr.message);
+        }
+      }
+      if(!done) throw new Error('No photos could be processed.');
+      const outBytes = await out.save();
+      download(outBytes, 'photos.pdf', 'application/pdf');
+      st.textContent = `Done — ${done}/${files.length} photos converted to PDF (${fmt(outBytes.length)}).`;
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initPdf2Jpg(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div class="row2">
+      <div class="field"><label>Quality</label>
+        <select id="q"><option value="0.7" selected>Good</option>
+        <option value="0.5">Medium</option><option value="0.9">High</option></select></div>
+      <div class="field"><label>Scale</label>
+        <select id="s"><option value="1.5" selected>1.5×</option>
+        <option value="1">1×</option><option value="2">2×</option></select></div>
+    </div>
+    <button id="run" class="btn">Convert to JPG (ZIP)</button>
+    <div id="st" class="status"></div>`;
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = f.files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Working…';
+    try{
+      const bytes = await loadBytes(file);
+      const pdf = await openPdfJs(bytes);
+      const q = parseFloat(body.querySelector('#q').value);
+      const scale = parseFloat(body.querySelector('#s').value);
+      const zip = new JSZip();
+      for(let i=1;i<=pdf.numPages;i++){
+        st.textContent = `Rendering page ${i}/${pdf.numPages}…`;
+        const page = await pdf.getPage(i);
+        const { canvas } = await renderPageToCanvas(page, scale);
+        const blob = await canvasBlob(canvas, 'image/jpeg', q);
+        zip.file(`page-${String(i).padStart(3,'0')}.jpg`, blob);
+      }
+      download(await zip.generateAsync({type:'blob'}), 'pdf-images.zip', 'application/zip');
+      st.textContent = 'Done — ' + pdf.numPages + ' JPGs in ZIP.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initPdf2Md(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <button id="run" class="btn">Extract to Markdown</button>
+    <div id="st" class="status"></div>`;
+  const st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = body.querySelector('#f').files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Extracting text…';
+    try{
+      const pdf = await openPdfJs(await loadBytes(file));
+      let md = '# ' + file.name.replace(/\.pdf$/i,'') + '\n\n';
+      for(let i=1;i<=pdf.numPages;i++){
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const byY = new Map();
+        for(const it of content.items){
+          if(!it.str) continue;
+          const y = Math.round(it.transform[5]);
+          if(!byY.has(y)) byY.set(y, []);
+          byY.get(y).push(it);
+        }
+        const ys = [...byY.keys()].sort((a,b)=>b-a);
+        const text = ys.map(y => byY.get(y).map(it => it.str).join('').trim()).filter(Boolean).join('\n');
+        md += `## Page ${i}\n\n${text}\n\n`;
+      }
+      download(md, 'extracted.md', 'text/markdown');
+      st.textContent = 'Done — Markdown file downloaded.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initCompress(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div class="field"><label>Compression mode</label>
+      <select id="mode">
+        <option value="preset" selected>Preset (Recommended)</option>
+        <option value="target">Custom target file size</option>
+      </select></div>
+
+    <div class="field" id="preset-wrap"><label>Preset</label>
+      <select id="preset">
+        <option value="0.3,0.5">Extreme — smallest file</option>
+        <option value="0.5,0.8" selected>Recommended — balanced</option>
+        <option value="0.7,1.0">Low compression — best quality</option>
+      </select></div>
+
+    <div class="field hidden" id="target-wrap">
+      <label class="text-base font-semibold text-slate-700 mb-2 block">Required output size (whole PDF)</label>
+      <div class="grid grid-cols-[1fr_auto] gap-3 items-center">
+        <input type="number" id="target-val" value="500" min="5" max="2048" step="any" class="w-full h-16 px-4 text-3xl font-bold text-center rounded-xl border-2 border-indigo-300 bg-indigo-50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-200 transition-all text-indigo-900" />
+        <select id="target-unit" class="w-24 h-16 text-lg font-bold text-center rounded-xl border-2 border-indigo-300 bg-white px-2 cursor-pointer focus:outline-none focus:ring-4 focus:ring-indigo-200 text-indigo-900">
+          <option value="KB">KB</option>
+          <option value="MB">MB</option>
+        </select>
+      </div>
+      <p class="text-xs text-slate-500 mt-2">Range: 5 KB – 2048 KB (2 MB). Quality and resolution are reduced to fit; very small targets may hurt readability.</p>
+    </div>
+
+    <button id="run" class="btn">Compress PDF</button>
+    <div class="w-full bg-slate-200 rounded-full h-2 mt-3 hidden" id="prog"><div class="bg-indigo-600 h-2 rounded-full transition-all" id="progf" style="width:0%"></div></div>
+    <div id="st" class="status"></div>`;
+
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  const prog=body.querySelector('#prog'), progf=body.querySelector('#progf');
+  const mode=body.querySelector('#mode');
+  const presetWrap=body.querySelector('#preset-wrap'), targetWrap=body.querySelector('#target-wrap');
+
+  mode.onchange = () => {
+    presetWrap.classList.toggle('hidden', mode.value !== 'preset');
+    targetWrap.classList.toggle('hidden', mode.value !== 'target');
+  };
+
+  run.onclick = async () => {
+    const file = f.files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; prog.classList.remove('hidden');
+    try{
+      if(mode.value === 'preset'){
+        const [q, scale] = body.querySelector('#preset').value.split(',').map(parseFloat);
+        const bytes = await loadBytes(file);
+        const pdf = await openPdfJs(bytes);
+        const out = await PDFDocument.create();
+        for(let i=1;i<=pdf.numPages;i++){
+          st.textContent = `Processing page ${i}/${pdf.numPages}…`;
+          progf.style.width = `${((i-1)/pdf.numPages)*100}%`;
+          const page = await pdf.getPage(i);
+          const { canvas } = await renderPageToCanvas(page, scale);
+          const blob = await canvasBlob(canvas, 'image/jpeg', q);
+          const img = await out.embedJpg(new Uint8Array(await blob.arrayBuffer()));
+          const orig = page.getViewport({ scale: 1 });
+          const p = out.addPage([orig.width, orig.height]);
+          p.drawImage(img, { x:0, y:0, width:orig.width, height:orig.height });
+        }
+        progf.style.width = '100%';
+        const outBytes = await out.save();
+        download(outBytes, 'compressed.pdf', 'application/pdf');
+        st.textContent = `Done — original ${fmt(file.size)}, compressed ${fmt(outBytes.length)}.`;
+      } else {
+        let targetBytes;
+        try{
+          targetBytes = parseSizeInput(
+            body.querySelector('#target-val').value,
+            body.querySelector('#target-unit').value
+          );
+        }catch(err){
+          throw new Error(err.message);
+        }
+        if(targetBytes >= file.size){
+          st.textContent = `Target (${fmt(targetBytes)}) is already ≥ original (${fmt(file.size)}). No compression needed.`;
+          run.disabled = false; prog.classList.add('hidden');
+          return;
+        }
+        const result = await compressPdfToTarget(file, targetBytes, (msg, pct) => {
+          st.textContent = msg;
+          progf.style.width = `${Math.min(100, pct*100)}%`;
+        });
+        progf.style.width = '100%';
+        download(result.bytes, 'compressed.pdf', 'application/pdf');
+        if(result.achieved){
+          st.textContent = `Done — original ${fmt(file.size)}, compressed ${fmt(result.size)} (target ${fmt(targetBytes)}).`;
+        } else {
+          st.textContent = `Best effort: original ${fmt(file.size)}, compressed ${fmt(result.size)}. Target ${fmt(targetBytes)} could not be reached without losing too much detail.`;
+        }
+      }
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; prog.classList.add('hidden'); }
+  };
+}
+
+function initImageCompress(body){
+  body.innerHTML = `
+    <div class="field"><label>Images (JPG, PNG, WEBP, SVG — anything your browser can open)</label>
+      <input type="file" id="f" accept="image/*" multiple></div>
+
+    <div class="field"><label>Output format</label>
+      <select id="outfmt">
+        <option value="auto" selected>Auto — match each input (format in = format out)</option>
+        <option value="image/jpeg">JPEG / JPG</option>
+        <option value="image/png">PNG</option>
+        <option value="image/webp">WEBP</option>
+      </select>
+      <p class="text-xs text-slate-500 mt-1">SVG and other formats are accepted as input and rasterized. Browsers cannot encode SVG from a bitmap without a vectorization library.</p>
+    </div>
+
+    <div class="field"><label>Compression mode</label>
+      <select id="mode">
+        <option value="preset" selected>Preset (Recommended)</option>
+        <option value="target">Custom target file size</option>
+      </select></div>
+
+    <div class="field" id="preset-wrap"><label>Preset</label>
+      <select id="preset">
+        <option value="0.3">Extreme — smallest file</option>
+        <option value="0.6" selected>Recommended — balanced</option>
+        <option value="0.85">Low compression — best quality</option>
+      </select></div>
+
+    <div class="field hidden" id="target-wrap">
+      <label class="text-base font-semibold text-slate-700 mb-2 block">Required output size per image</label>
+      <div class="grid grid-cols-[1fr_auto] gap-3 items-center">
+        <input type="number" id="target-val" value="200" min="5" max="2048" step="any" class="w-full h-16 px-4 text-3xl font-bold text-center rounded-xl border-2 border-indigo-300 bg-indigo-50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-200 transition-all text-indigo-900" />
+        <select id="target-unit" class="w-24 h-16 text-lg font-bold text-center rounded-xl border-2 border-indigo-300 bg-white px-2 cursor-pointer focus:outline-none focus:ring-4 focus:ring-indigo-200 text-indigo-900">
+          <option value="KB">KB</option>
+          <option value="MB">MB</option>
+        </select>
+      </div>
+      <p class="text-xs text-slate-500 mt-2">Range: 5 KB – 2048 KB (2 MB). Quality and, if needed, resolution are reduced to fit. <strong>For small targets, JPEG or WEBP are more efficient than PNG.</strong></p>
+    </div>
+
+    <button id="run" class="btn">Compress Images (ZIP)</button>
+    <div id="st" class="status"></div>`;
+
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  const mode=body.querySelector('#mode');
+  const presetWrap=body.querySelector('#preset-wrap'), targetWrap=body.querySelector('#target-wrap');
+
+  mode.onchange = () => {
+    presetWrap.classList.toggle('hidden', mode.value !== 'preset');
+    targetWrap.classList.toggle('hidden', mode.value !== 'target');
+  };
+
+  run.onclick = async () => {
+    const files = [...f.files];
+    if(!files.length) return st.textContent = 'Select at least one image.';
+    run.disabled = true;
+    try{
+      let targetBytes = null;
+      if(mode.value === 'target'){
+        targetBytes = parseSizeInput(
+          body.querySelector('#target-val').value,
+          body.querySelector('#target-unit').value
+        );
+      }
+      const presetQ = parseFloat(body.querySelector('#preset').value);
+      const userOutFmt = body.querySelector('#outfmt').value;
+
+      const zip = new JSZip();
+      let done = 0, totalOrig = 0, totalNew = 0;
+      let achieved = 0, missed = 0;
+
+      for(const file of files){
+        st.textContent = `Compressing ${done+1}/${files.length}…`;
+        try{
+          const effectiveFmt = userOutFmt === 'auto' ? detectInputMime(file) : userOutFmt;
+          const ext = mimeToExt(effectiveFmt);
+          const baseName = file.name.replace(/\.[^.]+$/, '');
+          const outName = baseName + '-compressed.' + ext;
+
+          let blob;
+          if(mode.value === 'target' && file.size <= targetBytes){
+            blob = file;
+            zip.file(file.name, blob);
+            totalOrig += file.size;
+            totalNew += blob.size;
+            achieved++;
+            done++;
+            continue;
+          }
+
+          const { canvas } = await decodeImageToCanvas(file);
+          if(mode.value === 'preset'){
+            blob = await canvasBlob(canvas, effectiveFmt, presetQ);
+          } else {
+            const res = await compressImageToTarget(canvas, targetBytes, effectiveFmt);
+            blob = res.blob;
+            if(res.achieved) achieved++; else missed++;
+          }
+          zip.file(outName, blob);
+          totalOrig += file.size;
+          totalNew += blob.size;
+          done++;
+        }catch(imgErr){
+          console.warn('Skipping ' + file.name + ': ' + imgErr.message);
+        }
+      }
+      if(!done) throw new Error('No images could be compressed.');
+      download(await zip.generateAsync({type:'blob'}), 'compressed-images.zip', 'application/zip');
+      let msg = `Done — ${done}/${files.length} images. Original ${fmt(totalOrig)} → compressed ${fmt(totalNew)}.`;
+      if(mode.value === 'target'){
+        msg += ` Target hit: ${achieved}` + (missed ? `, could not fully reach target: ${missed}` : '');
+      }
+      st.textContent = msg;
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initWatermark(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div class="field"><label>Watermark text</label><input type="text" id="text" value="CONFIDENTIAL"></div>
+    <div class="row3">
+      <div class="field"><label>Font size</label><input type="number" id="size" value="60" min="8" max="200"></div>
+      <div class="field"><label>Opacity (0–1)</label><input type="number" id="op" value="0.3" min="0.05" max="1" step="0.05"></div>
+      <div class="field"><label>Color</label><input type="text" id="color" value="#ef4444"></div>
+    </div>
+    <button id="run" class="btn">Apply Watermark</button>
+    <div id="st" class="status"></div>`;
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = f.files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Applying…';
+    try{
+      const doc = await loadPdfLib(await loadBytes(file));
+      const font = await doc.embedFont(StandardFonts.HelveticaBold);
+      const text = body.querySelector('#text').value || 'WATERMARK';
+      const size = parseInt(body.querySelector('#size').value) || 60;
+      const opacity = parseFloat(body.querySelector('#op').value) || 0.3;
+      const color = rgbHex(body.querySelector('#color').value || '#ef4444');
+      const textW = font.widthOfTextAtSize(text, size);
+      const textH = font.heightAtSize(size);
+      doc.getPages().forEach(p => {
+        const { width, height } = p.getSize();
+        p.drawText(text, {
+          x: (width - textW*0.7) / 2,
+          y: (height - textH) / 2,
+          size, font, color, opacity,
+          rotate: degrees(45)
+        });
+      });
+      download(await doc.save(), 'watermarked.pdf', 'application/pdf');
+      st.textContent = 'Done — watermark applied to ' + doc.getPageCount() + ' pages.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initPageNumbers(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div class="row2">
+      <div class="field"><label>Position</label>
+        <select id="pos">
+          <option value="bc" selected>Bottom center</option>
+          <option value="br">Bottom right</option>
+          <option value="bl">Bottom left</option>
+          <option value="tc">Top center</option>
+        </select></div>
+      <div class="field"><label>Font size</label><input type="number" id="size" value="12" min="6" max="40"></div>
+    </div>
+    <div class="field"><label>Start number</label><input type="number" id="start" value="1" min="1"></div>
+    <button id="run" class="btn">Add Page Numbers</button>
+    <div id="st" class="status"></div>`;
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = f.files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Adding…';
+    try{
+      const doc = await loadPdfLib(await loadBytes(file));
+      const font = await doc.embedFont(StandardFonts.Helvetica);
+      const size = parseInt(body.querySelector('#size').value) || 12;
+      const start = parseInt(body.querySelector('#start').value) || 1;
+      const pos = body.querySelector('#pos').value;
+      doc.getPages().forEach((p, i) => {
+        const { width, height } = p.getSize();
+        const label = String(start + i);
+        const w = font.widthOfTextAtSize(label, size);
+        const margin = 24;
+        let x, y;
+        if(pos === 'bc'){ x = (width - w) / 2; y = margin; }
+        else if(pos === 'br'){ x = width - w - margin; y = margin; }
+        else if(pos === 'bl'){ x = margin; y = margin; }
+        else { x = (width - w) / 2; y = height - size - margin; }
+        p.drawText(label, { x, y, size, font, color: rgb(0.2,0.2,0.2) });
+      });
+      download(await doc.save(), 'numbered.pdf', 'application/pdf');
+      st.textContent = 'Done — numbers added to ' + doc.getPageCount() + ' pages.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initCrop(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <p class="text-xs text-slate-500 mb-3">Margins are in points (72 pt = 1 inch).</p>
+    <div class="row2">
+      <div class="field"><label>Top margin</label><input type="number" id="top" value="20" min="0"></div>
+      <div class="field"><label>Bottom margin</label><input type="number" id="bot" value="20" min="0"></div>
+      <div class="field"><label>Left margin</label><input type="number" id="left" value="20" min="0"></div>
+      <div class="field"><label>Right margin</label><input type="number" id="right" value="20" min="0"></div>
+    </div>
+    <button id="run" class="btn">Crop PDF</button>
+    <div id="st" class="status"></div>`;
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = f.files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Cropping…';
+    try{
+      const doc = await loadPdfLib(await loadBytes(file));
+      const t = parseFloat(body.querySelector('#top').value)||0;
+      const b = parseFloat(body.querySelector('#bot').value)||0;
+      const l = parseFloat(body.querySelector('#left').value)||0;
+      const r = parseFloat(body.querySelector('#right').value)||0;
+      doc.getPages().forEach(p => {
+        const { width, height } = p.getSize();
+        p.setCropBox(l, b, Math.max(10, width-l-r), Math.max(10, height-t-b));
+      });
+      download(await doc.save(), 'cropped.pdf', 'application/pdf');
+      st.textContent = 'Done — cropped ' + doc.getPageCount() + ' pages.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initAddText(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div class="field"><label>Text to add</label><textarea id="text" rows="3" placeholder="Type your text…"></textarea></div>
+    <div class="row3">
+      <div class="field"><label>Size</label><input type="number" id="size" value="24" min="6"></div>
+      <div class="field"><label>X (points)</label><input type="number" id="x" value="50" min="0"></div>
+      <div class="field"><label>Y from bottom (points)</label><input type="number" id="y" value="100" min="0"></div>
+    </div>
+    <div class="field"><label>Color</label><input type="text" id="color" value="#1f1d2b"></div>
+    <button id="run" class="btn">Add Text</button>
+    <div id="st" class="status"></div>`;
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = f.files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    const txt = body.querySelector('#text').value;
+    if(!txt.trim()) return st.textContent = 'Enter some text.';
+    run.disabled = true; st.textContent = 'Adding…';
+    try{
+      const doc = await loadPdfLib(await loadBytes(file));
+      const font = await doc.embedFont(StandardFonts.Helvetica);
+      const size = parseFloat(body.querySelector('#size').value)||24;
+      const x = parseFloat(body.querySelector('#x').value)||50;
+      const y = parseFloat(body.querySelector('#y').value)||100;
+      const color = rgbHex(body.querySelector('#color').value||'#1f1d2b');
+      doc.getPages().forEach(p => p.drawText(txt, { x, y, size, font, color }));
+      download(await doc.save(), 'added-text.pdf', 'application/pdf');
+      st.textContent = 'Done — text added to ' + doc.getPageCount() + ' pages.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initAddShapes(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div class="field"><label>Shape</label>
+      <select id="shape"><option value="rect">Rectangle</option><option value="ellipse">Ellipse</option><option value="line">Line</option></select></div>
+    <div class="row3">
+      <div class="field"><label>X</label><input type="number" id="x" value="50"></div>
+      <div class="field"><label>Y</label><input type="number" id="y" value="100"></div>
+      <div class="field"><label>Width</label><input type="number" id="w" value="200"></div>
+      <div class="field"><label>Height</label><input type="number" id="h" value="80"></div>
+      <div class="field"><label>Color</label><input type="text" id="color" value="#4f46e5"></div>
+      <div class="field"><label>Opacity</label><input type="number" id="op" value="0.5" min="0.05" max="1" step="0.05"></div>
+    </div>
+    <button id="run" class="btn">Add Shape</button>
+    <div id="st" class="status"></div>`;
+  const f=body.querySelector('#f'), st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = f.files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Drawing…';
+    try{
+      const doc = await loadPdfLib(await loadBytes(file));
+      const shape = body.querySelector('#shape').value;
+      const x = parseFloat(body.querySelector('#x').value)||50;
+      const y = parseFloat(body.querySelector('#y').value)||100;
+      const w = parseFloat(body.querySelector('#w').value)||200;
+      const h = parseFloat(body.querySelector('#h').value)||80;
+      const color = rgbHex(body.querySelector('#color').value||'#4f46e5');
+      const op = parseFloat(body.querySelector('#op').value)||0.5;
+      doc.getPages().forEach(p => {
+        if(shape === 'rect') p.drawRectangle({ x, y, width:w, height:h, color, opacity:op });
+        else if(shape === 'ellipse') p.drawEllipse({ x: x+w/2, y: y+h/2, xScale:w/2, yScale:h/2, color, opacity:op });
+        else p.drawLine({ start:{x,y}, end:{x:x+w, y:y+h}, thickness:2, color, opacity:op });
+      });
+      download(await doc.save(), 'shapes.pdf', 'application/pdf');
+      st.textContent = 'Done — shape drawn on ' + doc.getPageCount() + ' pages.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initInsertImage(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="pdf" accept="application/pdf"></div>
+    <div class="field"><label>Image (PNG or JPG)</label><input type="file" id="img" accept="image/png,image/jpeg"></div>
+    <div class="row3">
+      <div class="field"><label>X</label><input type="number" id="x" value="40"></div>
+      <div class="field"><label>Y (from bottom)</label><input type="number" id="y" value="40"></div>
+      <div class="field"><label>Width</label><input type="number" id="w" value="120"></div>
+      <div class="field"><label>Opacity</label><input type="number" id="op" value="1" min="0.05" max="1" step="0.05"></div>
+    </div>
+    <button id="run" class="btn">Insert Image</button>
+    <div id="st" class="status"></div>`;
+  const st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const pdfFile = body.querySelector('#pdf').files[0];
+    const imgFile = body.querySelector('#img').files[0];
+    if(!pdfFile) return st.textContent = 'Select a PDF.';
+    if(!imgFile) return st.textContent = 'Select an image.';
+    run.disabled = true; st.textContent = 'Inserting…';
+    try{
+      const doc = await loadPdfLib(await loadBytes(pdfFile));
+      const imgBytes = new Uint8Array(await imgFile.arrayBuffer());
+      const img = imgFile.type === 'image/png' ? await doc.embedPng(imgBytes) : await doc.embedJpg(imgBytes);
+      const x = parseFloat(body.querySelector('#x').value)||40;
+      const y = parseFloat(body.querySelector('#y').value)||40;
+      const w = parseFloat(body.querySelector('#w').value)||120;
+      const h = (img.height / img.width) * w;
+      const op = parseFloat(body.querySelector('#op').value)||1;
+      doc.getPages().forEach(p => p.drawImage(img, { x, y, width:w, height:h, opacity:op }));
+      download(await doc.save(), 'with-image.pdf', 'application/pdf');
+      st.textContent = 'Done — image inserted on ' + doc.getPageCount() + ' pages.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initFormFields(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div class="field"><label>Field type</label>
+      <select id="type">
+        <option value="text">Text field</option>
+        <option value="checkbox">Checkbox</option>
+        <option value="dropdown">Dropdown</option>
+      </select></div>
+    <div class="row2">
+      <div class="field"><label>Page number</label><input type="number" id="page" value="1" min="1"></div>
+      <div class="field"><label>Field name</label><input type="text" id="name" value="field1"></div>
+    </div>
+    <div class="row3">
+      <div class="field"><label>X</label><input type="number" id="x" value="100"></div>
+      <div class="field"><label>Y (from bottom)</label><input type="number" id="y" value="500"></div>
+      <div class="field"><label>Width</label><input type="number" id="w" value="200"></div>
+      <div class="field"><label>Height</label><input type="number" id="h" value="30"></div>
+    </div>
+    <div class="field"><label>Dropdown options (comma-separated)</label>
+      <input type="text" id="opts" value="Option A,Option B,Option C"></div>
+    <button id="run" class="btn">Add Field</button>
+    <div id="st" class="status"></div>`;
+  const st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = body.querySelector('#f').files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Adding field…';
+    try{
+      const doc = await loadPdfLib(await loadBytes(file));
+      const pageNum = parseInt(body.querySelector('#page').value)-1;
+      if(pageNum < 0 || pageNum >= doc.getPageCount()) throw new Error('Page out of range.');
+      const page = doc.getPage(pageNum);
+      const form = doc.getForm();
+      const name = body.querySelector('#name').value || 'field';
+      const x = parseFloat(body.querySelector('#x').value)||100;
+      const y = parseFloat(body.querySelector('#y').value)||500;
+      const w = parseFloat(body.querySelector('#w').value)||200;
+      const h = parseFloat(body.querySelector('#h').value)||30;
+      const type = body.querySelector('#type').value;
+      if(type === 'text'){
+        const field = form.createTextField(name);
+        field.addToPage(page, { x, y, width:w, height:h });
+      } else if(type === 'checkbox'){
+        const field = form.createCheckBox(name);
+        field.addToPage(page, { x, y, width:24, height:24 });
+      } else {
+        const field = form.createDropdown(name);
+        const opts = body.querySelector('#opts').value.split(',').map(s=>s.trim()).filter(Boolean);
+        field.addOptions(opts.length ? opts : ['Option 1']);
+        field.addToPage(page, { x, y, width:w, height:h });
+      }
+      download(await doc.save(), 'with-form.pdf', 'application/pdf');
+      st.textContent = 'Done — field added to page ' + (pageNum+1) + '.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initRedact(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <p class="text-xs text-slate-500 mb-3">Pages are rasterized, so the underlying text is permanently removed.</p>
+    <div class="field"><label>Pages to redact (e.g. 1-2,5)</label><input type="text" id="pages" value="1"></div>
+    <div class="row2">
+      <div class="field"><label>Region X (%)</label><input type="number" id="rx" value="10" min="0" max="100"></div>
+      <div class="field"><label>Region Y (% from top)</label><input type="number" id="ry" value="10" min="0" max="100"></div>
+      <div class="field"><label>Region width (%)</label><input type="number" id="rw" value="80" min="1" max="100"></div>
+      <div class="field"><label>Region height (%)</label><input type="number" id="rh" value="20" min="1" max="100"></div>
+    </div>
+    <button id="run" class="btn">Redact</button>
+    <div id="st" class="status"></div>`;
+  const st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = body.querySelector('#f').files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Rasterizing and redacting…';
+    try{
+      const bytes = await loadBytes(file);
+      const src = await openPdfJs(bytes);
+      const toRedact = new Set(parseRanges(body.querySelector('#pages').value, src.numPages));
+      const rx = parseFloat(body.querySelector('#rx').value)/100;
+      const ry = parseFloat(body.querySelector('#ry').value)/100;
+      const rw = parseFloat(body.querySelector('#rw').value)/100;
+      const rh = parseFloat(body.querySelector('#rh').value)/100;
+      const out = await PDFDocument.create();
+      for(let i=1;i<=src.numPages;i++){
+        st.textContent = `Processing page ${i}/${src.numPages}…`;
+        const page = await src.getPage(i);
+        const { canvas } = await renderPageToCanvas(page, 2);
+        if(toRedact.has(i-1)){
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(rx*canvas.width, ry*canvas.height, rw*canvas.width, rh*canvas.height);
+        }
+        const blob = await canvasBlob(canvas, 'image/jpeg', 0.85);
+        const img = await out.embedJpg(new Uint8Array(await blob.arrayBuffer()));
+        const orig = page.getViewport({ scale: 1 });
+        const p = out.addPage([orig.width, orig.height]);
+        p.drawImage(img, { x:0, y:0, width:orig.width, height:orig.height });
+      }
+      download(await out.save(), 'redacted.pdf', 'application/pdf');
+      st.textContent = 'Done — redacted ' + toRedact.size + ' pages.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initSign(body){
+  body.innerHTML = `
+    <div class="field"><label>PDF file</label><input type="file" id="f" accept="application/pdf"></div>
+    <div class="field"><label>Draw your signature below</label>
+      <canvas id="sig-canvas" width="1000" height="360"></canvas>
+      <div class="flex gap-2 mt-2">
+        <button id="clear" class="btn-ghost">Clear</button>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Page to sign</label><input type="number" id="page" value="1" min="1"></div>
+      <div class="field"><label>Width (points)</label><input type="number" id="w" value="180" min="40"></div>
+    </div>
+    <button id="run" class="btn">Sign PDF</button>
+    <div id="st" class="status"></div>`;
+  const canvas = body.querySelector('#sig-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle = '#1f1d2b';
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  let drawing = false;
+  let lastPoint = null;
+
+  function getPos(e){
+    const rect = canvas.getBoundingClientRect();
+    const p = e.touches ? e.touches[0] : e;
+    return {
+      x: (p.clientX - rect.left) * (canvas.width/rect.width),
+      y: (p.clientY - rect.top) * (canvas.height/rect.height)
+    };
+  }
+  function start(e){
+    if(e.touches) e.preventDefault();
+    drawing = true;
+    lastPoint = getPos(e);
+  }
+  function move(e){
+    if(!drawing) return;
+    if(e.touches) e.preventDefault();
+    const p = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(lastPoint.x, lastPoint.y);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    lastPoint = p;
+  }
+  function end(){ drawing = false; lastPoint = null; }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, {passive:false});
+  canvas.addEventListener('touchmove', move, {passive:false});
+  window.addEventListener('touchend', end);
+
+  body.querySelector('#clear').onclick = () => {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+  };
+
+  const st = body.querySelector('#st'), run = body.querySelector('#run');
+  run.onclick = async () => {
+    const file = body.querySelector('#f').files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Signing…';
+    try{
+      const doc = await loadPdfLib(await loadBytes(file));
+      const pageNum = parseInt(body.querySelector('#page').value)-1;
+      if(pageNum < 0 || pageNum >= doc.getPageCount()) throw new Error('Page out of range.');
+      const pngBytes = await new Promise(res => canvas.toBlob(b => b.arrayBuffer().then(a => res(new Uint8Array(a))), 'image/png'));
+      const sig = await doc.embedPng(pngBytes);
+      const page = doc.getPage(pageNum);
+      const { width } = page.getSize();
+      const w = parseFloat(body.querySelector('#w').value)||180;
+      const h = (sig.height / sig.width) * w;
+      page.drawImage(sig, { x: width - w - 40, y: 40, width: w, height: h });
+      download(await doc.save(), 'signed.pdf', 'application/pdf');
+      st.textContent = 'Done — signature added to page ' + (pageNum+1) + '.';
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initCompare(body){
+  body.innerHTML = `
+    <div class="row2">
+      <div class="field"><label>Original PDF</label><input type="file" id="a" accept="application/pdf"></div>
+      <div class="field"><label>Revised PDF</label><input type="file" id="b" accept="application/pdf"></div>
+    </div>
+    <button id="run" class="btn">Compare</button>
+    <div id="out" class="mt-4 text-sm font-mono max-h-96 overflow-auto"></div>
+    <div id="st" class="status"></div>`;
+  const st=body.querySelector('#st'), run=body.querySelector('#run'), out=body.querySelector('#out');
+  run.onclick = async () => {
+    const aFile = body.querySelector('#a').files[0];
+    const bFile = body.querySelector('#b').files[0];
+    if(!aFile || !bFile) return st.textContent = 'Select both PDFs.';
+    run.disabled = true; st.textContent = 'Extracting text…';
+    try{
+      async function getLines(file){
+        const pdf = await openPdfJs(await loadBytes(file));
+        let lines = [];
+        for(let i=1;i<=pdf.numPages;i++){
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          const byY = new Map();
+          for(const it of content.items){
+            if(!it.str) continue;
+            const y = Math.round(it.transform[5]);
+            if(!byY.has(y)) byY.set(y, []);
+            byY.get(y).push(it.str);
+          }
+          const ys = [...byY.keys()].sort((a,b)=>b-a);
+          for(const y of ys){
+            const line = byY.get(y).join('').trim();
+            if(line) lines.push(line);
+          }
+        }
+        return lines;
+      }
+      const A = await getLines(aFile);
+      const B = await getLines(bFile);
+      const n = A.length, m = B.length;
+      const dp = Array.from({length:n+1}, () => new Array(m+1).fill(0));
+      for(let i=1;i<=n;i++) for(let j=1;j<=m;j++)
+        dp[i][j] = A[i-1] === B[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j], dp[i][j-1]);
+      const result = [];
+      let i=n, j=m;
+      while(i>0 || j>0){
+        if(i>0 && j>0 && A[i-1] === B[j-1]){ result.unshift({t:'same', v:A[i-1]}); i--; j--; }
+        else if(j>0 && (i===0 || dp[i][j-1] >= dp[i-1][j])){ result.unshift({t:'add', v:B[j-1]}); j--; }
+        else { result.unshift({t:'del', v:A[i-1]}); i--; }
+      }
+      out.innerHTML = '';
+      result.forEach(r => {
+        const d = document.createElement('div');
+        d.className = r.t === 'add' ? 'diff-add' : r.t === 'del' ? 'diff-del' : 'diff-same';
+        d.textContent = (r.t === 'add' ? '+ ' : r.t === 'del' ? '− ' : '  ') + r.v;
+        out.appendChild(d);
+      });
+      st.textContent = `Compared ${n} vs ${m} lines. Green = added, red = removed.`;
+    }catch(e){ st.textContent = 'Error: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initRepair(body){
+  body.innerHTML = `
+    <div class="field"><label>Damaged PDF</label><input type="file" id="f" accept="application/pdf"></div>
+    <p class="text-xs text-slate-500 mb-3">Best-effort: attempts to parse and re-save the PDF structure. Severely damaged files, or files with broken encryption, may still fail.</p>
+    <button id="run" class="btn">Attempt Repair</button>
+    <div id="st" class="status"></div>`;
+  const st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = body.querySelector('#f').files[0];
+    if(!file) return st.textContent = 'Select a PDF first.';
+    run.disabled = true; st.textContent = 'Attempting repair…';
+    try{
+      const doc = await PDFDocument.load(await loadBytes(file), {
+        ignoreEncryption: true,
+        updateMetadata: false,
+        throwOnInvalidObject: false
+      });
+      download(await doc.save(), 'repaired.pdf', 'application/pdf');
+      st.textContent = 'Done — repaired PDF downloaded (' + doc.getPageCount() + ' pages recovered).';
+    }catch(e){ st.textContent = 'Could not repair: ' + e.message; }
+    finally{ run.disabled = false; }
+  };
+}
+
+function initOcr(body){
+  body.innerHTML = `
+    <div class="field"><label>Scanned PDF or image</label>
+      <input type="file" id="f" accept="application/pdf,image/png,image/jpeg"></div>
+    <p class="text-xs text-amber-600 mb-3">First run downloads the OCR engine and English language model (~15 MB). Requires internet on first use.</p>
+    <button id="run" class="btn">Run OCR</button>
+    <div id="st" class="status"></div>`;
+  const st=body.querySelector('#st'), run=body.querySelector('#run');
+  run.onclick = async () => {
+    const file = body.querySelector('#f').files[0];
+    if(!file) return st.textContent = 'Select a file first.';
+    run.disabled = true;
+    st.textContent = 'Loading OCR engine (this may take a minute)…';
+    let worker = null;
+    try{
+      if(!window.Tesseract){
+        await new Promise((res, rej) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+          s.onload = res;
+          s.onerror = () => rej(new Error('Could not load Tesseract.js (check internet connection)'));
+          document.head.appendChild(s);
+        });
+      }
+      worker = await Tesseract.createWorker('eng');
+      let allText = '';
+      if(file.type === 'application/pdf'){
+        const pdf = await openPdfJs(await loadBytes(file));
+        for(let i=1;i<=pdf.numPages;i++){
+          st.textContent = `OCR page ${i}/${pdf.numPages}…`;
+          const page = await pdf.getPage(i);
+          const { canvas } = await renderPageToCanvas(page, 2);
+          const { data } = await worker.recognize(canvas);
+          allText += `\n\n===== Page ${i} =====\n\n` + data.text;
+        }
+      } else {
+        const { canvas } = await decodeImageToCanvas(file);
+        const { data } = await worker.recognize(canvas);
+        allText = data.text;
+      }
+      download(new Blob([allText.trim()], {type:'text/plain'}), 'ocr-output.txt', 'text/plain');
+      st.textContent = 'Done — extracted text saved as ocr-output.txt.';
+    }catch(e){ st.textContent = 'OCR failed: ' + e.message; }
+    finally{
+      if(worker){ try{ await worker.terminate(); }catch(_){} }
+      run.disabled = false;
+    }
+  };
+}
+
+renderFilters();
+renderGrid();
+</script>
+</body>
+</html>
